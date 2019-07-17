@@ -25,3 +25,8 @@ users by linking them to each age, so if you think you are able to incorporate
 them into Sparrow somehow, let me know, and I’ll send them to you. If Sparrow
 can link these raw datafiles to each age, then the test dose signal data I’ve
 included in the spreadsheet would no longer be necessary.
+
+## Usage
+
+The `sparrow` command has to be on your `$PATH` to use this repository, and you
+must run `sparrow` subcommands from this directory or a subdirectory.
