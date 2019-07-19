@@ -28,4 +28,4 @@ def cli(stop_on_error=False, verbose=False, redo=False):
 
     db = Database()
     importer = OSLImporter(db)
-    importer.iterfiles(path.glob("*.xlsx"))
+    importer.iterfiles(path.glob("*.xlsx"), redo=redo)

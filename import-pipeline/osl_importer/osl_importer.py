@@ -53,9 +53,13 @@ class OSLImporter(BaseImporter):
 
         for i, row in df.iterrows():
             sample = self.create_sample(row)
+            # This flush is important, maybe we should
+            # integrate into create_sample
+            self.db.session.flush()
             session = self.create_session(row, sample)
             project.add_session(session)
             yield sample
+            yield session
 
 
     def create_sample(self, row):
@@ -66,8 +70,6 @@ class OSLImporter(BaseImporter):
         lat = row.loc["GEOGRAPHIC COORDINATES"]
         lon = row.iloc[5]
         sample.location = self.location(lon, lat)
-
-        self.db.session.add(sample)
 
         return sample
 
