@@ -6,5 +6,5 @@ export default {
   landingText: h 'div', [
     h Markdown, {src: aboutText}
   ]
-  siteTitle: 'Desert Research Institute 🌵'
+  siteTitle: 'DRI Luminescence Laboratory'
 }
