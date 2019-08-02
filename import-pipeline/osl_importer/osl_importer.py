@@ -47,14 +47,19 @@ class OSLImporter(BaseImporter):
         for i, row in df.iterrows():
             # Add all researchers defined by the project
             for r in self.create_researchers(row):
-                project.add_researcher(r)
+                project.researcher_collection.append(r)
 
-            sample = self.create_sample(row)
+            sample = self.create_sample(row.replace({N.nan: None}))
             # This flush is important, maybe we should
             # integrate into create_sample
             self.db.session.flush()
             session = self.create_session(row, sample)
             project.add_session(session)
+            # `yield`ing the results lets the importer
+            # know that the data files should be linked
+            # to both of these entities. Then, changes
+            # to those data files will trigger merging
+            # of any changes to the sample and session.
             yield sample
             yield session
 
@@ -72,6 +77,9 @@ class OSLImporter(BaseImporter):
         lon = row.iloc[5]
         sample.location = self.location(lon, lat)
 
+        ## Add material for sample
+        # The column header for DEPOSIT/ROCK TYPE has spacing issues
+        sample._material = self.material(row.iloc[6], "deposit")
         return sample
 
     def create_date(self, row):
@@ -81,7 +89,37 @@ class OSLImporter(BaseImporter):
         return datetime(int(year), 1, 1)
 
     def create_session(self, row, sample):
-        return self.db.get_or_create(
+        session = self.db.get_or_create(
             self.m.session,
             sample_id=sample.id,
             date=self.create_date(row))
+        session.date_precision = 'year'
+
+        # Target phase
+        min = row.loc["MINERAL"].strip()
+        if min == 'Q':
+            min = 'quartz'
+        if min == 'F':
+            min = 'feldspar'
+        if min is not None:
+            session._material = self.material(min, "mineral phase")
+
+        with self.db.session.no_autoflush:
+            a1 = self.mineral_separation_data(row)
+            a2 = self.dose_rate_data(row)
+            a3 = self.age_calculation_data(row)
+            session.analysis_collection = [a1,a2,a3]
+
+        return session
+
+    def mineral_separation_data(self, row):
+        a = self.analysis("mineral separation")
+        return a
+
+    def dose_rate_data(self, row):
+        a = self.analysis("dose rate measurement")
+        return a
+
+    def age_calculation_data(self, row):
+        a = self.analysis("age calculation")
+        return a
