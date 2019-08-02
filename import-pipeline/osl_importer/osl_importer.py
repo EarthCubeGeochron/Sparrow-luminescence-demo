@@ -44,14 +44,11 @@ class OSLImporter(BaseImporter):
         # We should add the prefix as either
         # an extra column or unstructured data to the project
 
-        # We only support one PI per project now, but
-        # maybe this should be changed
-        name = df.iloc[0].loc["PI"]
-        researcher = self.researcher(name=name)
-        self.db.session.add(researcher)
-        project.add_researcher(researcher)
-
         for i, row in df.iterrows():
+            # Add all researchers defined by the project
+            for r in self.create_researchers(row):
+                project.add_researcher(r)
+
             sample = self.create_sample(row)
             # This flush is important, maybe we should
             # integrate into create_sample
@@ -61,6 +58,10 @@ class OSLImporter(BaseImporter):
             yield sample
             yield session
 
+    def create_researchers(self, row):
+        names = row.loc["PI"].split("/")
+        for name in names:
+            yield self.researcher(name=name)
 
     def create_sample(self, row):
         sample_id = str(row["SAMPLE ID"])
