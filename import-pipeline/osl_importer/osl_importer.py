@@ -140,8 +140,9 @@ class OSLImporter(BaseImporter):
     def dose_rate_data(self, session, row):
         a = self.add_analysis(session, "luminescence dose measurement")
         a._analysis_type = self.analysis_type(row.iloc[11], "luminescence signal")
-        a.data = dict(
-            dose_rate_measurement_method = [i.strip() for i in row.iloc[12].split('&')])
+
+        for v in row.iloc[12].split('&'):
+            self.attribute(a, "dose rate measurement method", v.strip())
 
         self.datum(a, "H2O content",
             row.iloc[13],
@@ -156,9 +157,27 @@ class OSLImporter(BaseImporter):
             unit="Gy",
             error_metric="1s")
 
-        self.datum(a, "OD", row.iloc[17])
+        self.datum(a, "OD", row.iloc[17], unit="%")
         return a
 
     def age_calculation_data(self, session, row):
         a = self.add_analysis(session, "age calculation")
+        # I don't necessarily know if this concept is really
+        # best modeled as a "constant"
+        self.attribute(a, "age model", row.iloc[18])
+
+        self.datum(a,
+            "luminescence age",
+            row.iloc[19],
+            error=row.iloc[20],
+            unit="ka",
+            error_metric="1s")
+
+        self.datum(a,
+            "total dose rate",
+            row.iloc[21],
+            error=row.iloc[22],
+            unit="Gy/ka",
+            error_metric="1s")
+
         return a
