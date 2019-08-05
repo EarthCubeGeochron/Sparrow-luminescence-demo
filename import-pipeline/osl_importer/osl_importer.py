@@ -133,7 +133,10 @@ class OSLImporter(BaseImporter):
 
         # Can't import as numeric because it's a range...
         # maybe we need to adujst the data type?
-        a.data = dict(grain_size = guard_nan(row.iloc[10]))
+        grain_size = row.iloc[10].split("-")
+        assert len(grain_size) == 2
+        self.datum(a, "minimum grain size", float(grain_size[0]), unit="µm")
+        self.datum(a, "maximum grain size", float(grain_size[1]), unit="µm")
 
         return a
 
