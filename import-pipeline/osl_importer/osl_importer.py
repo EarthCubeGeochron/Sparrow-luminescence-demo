@@ -4,6 +4,7 @@ from math import isnan
 import numpy as N
 from click import echo, secho
 from sqlalchemy.exc import IntegrityError, DataError
+from sqlalchemy import null
 from pandas import read_excel
 import re
 
@@ -100,9 +101,9 @@ class OSLImporter(BaseImporter):
             date=self.create_date(row))
         session.date_precision = 'year'
         session._method = self.method("OSL")
-        session.data = dict(
-            lab_id = guard_nan(row.iloc[2]))
-
+        session.name = guard_nan(row.iloc[1])
+        # Reset data json field in case there is stale data.
+        session.data = null()
 
         # Target phase
         min = row.loc["MINERAL"].strip()
@@ -142,7 +143,7 @@ class OSLImporter(BaseImporter):
 
     def dose_rate_data(self, session, row):
         a = self.add_analysis(session, "luminescence dose measurement")
-        a._analysis_type = self.analysis_type(row.iloc[11], "luminescence signal")
+        self.attribute(a, "luminescence signal", row.iloc[11].strip())
 
         for v in row.iloc[12].split('&'):
             self.attribute(a, "dose rate measurement method", v.strip())
