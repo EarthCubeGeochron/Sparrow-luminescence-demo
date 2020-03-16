@@ -6,6 +6,7 @@ export SPARROW_DATA_DIR="$here/test-data"
 export SPARROW_COMMANDS="$here/import-pipeline/bin"
 export SPARROW_SITE_CONTENT="$here/site-content"
 export SPARROW_BACKUP_DIR="$here/db-backups"
+# export SPARROW_HTTP_PORT=80 # For public usage.
 
 secrets="$here/sparrow-secrets.sh"
 if [ -f $secrets ]; then
