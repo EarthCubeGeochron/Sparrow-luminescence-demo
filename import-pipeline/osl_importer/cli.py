@@ -1,16 +1,17 @@
 #!/usr/bin/env python
 
 from os import environ
-from click import command, option, argument, echo, secho, style
+from click import command, option, echo, secho, style
 from pathlib import Path
+
 from sparrow import Database
-from sparrow.import_helpers import SparrowImportError, working_directory
 
 from .osl_importer import OSLImporter
 
+
 @command()
 @option('--stop-on-error', is_flag=True, default=False)
-@option('--verbose','-v', is_flag=True, default=False)
+@option('--verbose', '-v', is_flag=True, default=False)
 @option('--redo', default=False, is_flag=True)
 def cli(stop_on_error=False, verbose=False, redo=False):
     """
