@@ -12,10 +12,13 @@ To install Sparrow and load test DRILL data, take the following steps
 1. Install required dependencies (basically `Docker` and `zsh`). Make sure Docker is running.
 2. Clone this repository, and install submodules with `git submodule update --init --recursive`.
    This will install the proper version of Sparrow and its submodule components.
-3. Create a `sparrow-secrets.sh` file in this directory, with the appropriate values for secrets.
-4. Make sure that `Sparrow/bin/sparrow` (the main Sparrow executable) is linked
+3. Create a `sparrow-secrets.sh` file in this directory (using the supplied template),
+   with the appropriate values for secrets.
+4. Optionally, create a `sparrow-config.overrides.sh` file in this directory (using the supplied template),
+   if you want to override variables such as `SPARROW_ENV` without committing the changes.
+5. Make sure that `Sparrow/bin/sparrow` (the main Sparrow executable) is linked
    to your path, or otherwise runnable.
-5. Run `sparrow up` to install Sparrow and create the database. Sparrow will be running
+6. Run `sparrow up` to install Sparrow and create the database. Sparrow will be running
    at `http://localhost:5002`, unless you changed the `SPARROW_HTTP_PORT` configuration variable.
 
 Once you have a running instance of Sparrow, you can run a few operations to load data:

@@ -6,14 +6,24 @@ export SPARROW_DATA_DIR="$here/test-data"
 export SPARROW_COMMANDS="$here/import-pipeline/bin"
 export SPARROW_SITE_CONTENT="$here/site-content"
 export SPARROW_BACKUP_DIR="$here/db-backups"
-# export SPARROW_HTTP_PORT=80 # For public usage.
 
+# SPARROW_ENV="production" modifies the app's configuration
+# to run under Docker's "unless-stopped" restart policy, which
+# keeps the application up through system reboots (if the underlying
+# Docker Engine is restarted with systemd
+export SPARROW_ENV="production"
+
+# An override file for application secrets
 secrets="$here/sparrow-secrets.sh"
 if [ -f $secrets ]; then
   source $secrets
 else
   echo "Please create file 'sparrow-secrets.sh' using the template 'sparrow-secrets.example.sh'"
 fi
+
+# A separate overrides file if we want to define specific variables for production
+overrides="$here/sparrow-config.overrides.sh"
+[ -f "$overrides" ] && source "$overrides"
 
 # Helps separate database, etc. from other projects'
 # artifacts (useful mostly for development)
