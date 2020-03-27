@@ -1,0 +1,12 @@
+version: "3.4"
+services:
+  gateway:
+    ports:
+      # Map port 443 on host to 443 within container
+      # You could optionally map 80 too, if you want to do a redirect
+      - 443:443
+    volumes:
+      # Configuration is relative to the Sparrow directory
+      - ../nginx.conf:/etc/nginx/nginx.conf:ro
+      # Also add cert files as volumes here...
+

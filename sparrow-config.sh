@@ -13,6 +13,9 @@ export SPARROW_BACKUP_DIR="$here/db-backups"
 # Docker Engine is restarted with systemd
 export SPARROW_ENV="production"
 
+# Override docker-compose to add SSL config
+export SPARROW_COMPOSE_OVERRIDES="-f $(pwd)/docker-compose.ssl.yaml"
+
 # An override file for application secrets
 secrets="$here/sparrow-secrets.sh"
 if [ -f $secrets ]; then
